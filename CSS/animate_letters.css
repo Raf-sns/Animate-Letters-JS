@@ -1,0 +1,68 @@
+
+body {
+		font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+		-webkit-font-smoothing: antialiased;
+		text-rendering: optimizeLegibility;
+		margin: 0;
+		padding: 0;
+		width: 100vw;
+		min-height: 100vh;
+		background: #433535;
+		font-size: 2vmin;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		align-content: center;
+		justify-content: center;
+}
+footer {
+    position: fixed;
+    bottom: 0;
+}
+footer p {
+    margin: 0 0 1em;
+    font-size: 1em;
+    color: #9fc95f;
+}
+footer a {
+    color: #9fc95f;
+}
+.text_to_animate {
+		position: fixed;
+		top: 40vh;
+		font-size: 2.5em;
+		line-height: 1.4em;
+		letter-spacing: 3px;
+		text-align: center;
+		color: #9fc95f;
+}
+.text_to_animate span {
+		display: inline-block;
+		position: relative;
+		top: 0;
+		opacity: 1;
+		letter-spacing: 3px;
+		transform: rotateY(0deg);
+		transition: top 0.8s cubic-bezier(0.64, -0.16, 0.15, 1.64)
+		, opacity 0.8s linear
+		, letter-spacing 0.1s linear
+		, transform 2.4s ease;
+}
+.text_to_animate span.letters_in_top {
+		top: -100vh;
+		opacity: 0;
+}
+.text_to_animate span.rotate_letters {
+		transform: rotateY(-360deg);
+		transition: letter-spacing 0.1s linear
+		, transform 2.4s ease;
+}
+.text_to_animate span.space_letters {
+		letter-spacing: 8px;
+		transition: letter-spacing 0.1s linear
+		, transform 2.4s ease;
+}
+.text_to_animate.callback_anim {
+		transform: rotateZ(-10deg) scale(1.2);
+		transition: transform 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}

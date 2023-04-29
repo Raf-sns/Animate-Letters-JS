@@ -1,0 +1,99 @@
+/* Document */
+body {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  min-height: 100vh;
+  background: #433535;
+  font-size: 2vmin;
+}
+header {
+  position: fixed;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: center;
+  align-items: center;
+  width: 100vw;
+}
+header h1 {
+  padding: 0;
+  margin: 0.6em 0 0;
+  font-size: 2em;
+  color: #c0a670;
+}
+header quote {
+  padding: 0;
+  margin: 0.8em 0 0;
+  font-size: 1.12em;
+  color: #c0a670;
+}
+main {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+}
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100vw;
+}
+footer p {
+  margin: 0 0 1em;
+  font-size: 1em;
+  color: #c0a670;
+  text-align: center;
+}
+footer a {
+  color: #c0a670;
+}
+/* Demonstration */
+.text_to_animate {
+  margin: 0;
+  padding: 0;
+  font-size: 3.5em;
+  line-height: 1.5em;
+  letter-spacing: 4px;
+  text-align: center;
+  color: #9fc95f;
+  transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+.text_to_animate span {
+  display: inline-block;
+  z-index: 100;
+  position: relative;
+  top: 0;
+  opacity: 1;
+  letter-spacing: 4px;
+  transform: rotateY(0deg);
+  transition: top 1s cubic-bezier(0.64, -0.16, 0.15, 1.64), opacity 1s linear, letter-spacing 0.1s linear, transform 1s ease;
+}
+.text_to_animate span.letters_in_top {
+  top: -100vh;
+  opacity: 0;
+}
+.text_to_animate span.rotate_letters {
+  transform: rotateY(1080deg);
+  transition: transform 2s ease-in-out, letter-spacing 1s linear;
+}
+.text_to_animate span.space_letters {
+  letter-spacing: 12px;
+  transition: letter-spacing 1s linear, transform 2s ease-in-out;
+}
+.text_to_animate span.color_letters {
+  color: #bdd656;
+  text-shadow: 0 0 6px #d5f35bc9;
+}
+.callback_anim {
+  transform: rotateZ(-10deg) scale(1.2);
+  transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}

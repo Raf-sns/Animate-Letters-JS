@@ -1,0 +1,7 @@
+
+To see an example of use:
+
+- Create folder
+- Copy index.html file + JS folder to this folder
+- Open index.html on a browser
+- The demonstration is displayed
