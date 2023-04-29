@@ -86,7 +86,7 @@
 			this.error = false;
 
 			// error - element not found
-			if(!document.body.contains(document.querySelector(element))){
+			if( !document.body.contains(document.querySelector(element)) ){
 
 					console.error( `Animate letters : Element `+element+` is not defined, check please ...`);
 
@@ -96,8 +96,8 @@
 
 			// error - no options found
 			if( !options
-			|| typeof options.add === 'undefined'
-			|| typeof options.remove === 'undefined' ){
+			|| options.add === undefined
+			|| options.remove === undefined ){
 
 					console.error( `Animate letters : Please, provide an object of options`);
 
@@ -207,9 +207,20 @@
 					this.delay_time = 0;
 
 					// set increment delay for ech phases - default : 100
-					this.increment_delay =
-						( typeof options.timers[this.Indx].increment_delay !== 'undefined' )
-					? options.timers[this.Indx].increment_delay : 100;
+					// manage increment_delay not setted
+					if( options.timers[this.Indx] === undefined ){
+
+							// set an increment_delay value by default
+							this.increment_delay = 100;
+
+							// throw a message
+							console.info(`Animate letters : No value found for the timer of this phase, the default value was used`);
+					}
+					else{
+
+							// set increment_delay
+							this.increment_delay = options.timers[this.Indx].increment_delay;
+					}
 
 
 					// sibling letters wrapped with spans - array
