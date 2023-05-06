@@ -100,7 +100,6 @@ ex. **exemple/CSS/demo.css**
 5. Set options for an instance of Animate Letters :
 
 ```javascript
-<script>
 
 // set animate_letters() options
 var Animate_letters_options = {
@@ -132,12 +131,13 @@ var Animate_letters_options = {
     ['space_letters','color_letters']
   ],
   // timers by phases -> array of objects
-  // set : { increment_delay : [integer in milliseconds] }
+  // set : { 	delay : [integer in milliseconds],
+  //  				increment_delay : [integer in milliseconds]  }
   timers : [
-    { increment_delay : 60 },  // phase 1
-    { increment_delay : 40 },  // phase 2
-    { increment_delay : 30 },  // phase 3
-    { increment_delay : 20 }   // phase 4
+    { delay : 0, increment_delay : 60 },  // phase 1
+    { delay : 100, increment_delay : 40 },  // phase 2
+    { delay : 80, increment_delay : 30 },  // phase 3
+    { delay : 0, increment_delay : 20 }   // phase 4
   ],
   // remove spans who wrapped letters at the end of last phase
   // set : true / false
@@ -155,17 +155,15 @@ var Animate_letters_options = {
     // remove after n seconds
     var Timer = setTimeout(()=>{
 
-      container_text.classList.remove('callback_anim');
+        container_text.classList.remove('callback_anim');
 
-      clearTimeout( Timer );
+        clearTimeout( Timer );
 
     }, 800 );
   }
 
 };
 // end animate_letters() options
-
-<script>
 
 ```
 
