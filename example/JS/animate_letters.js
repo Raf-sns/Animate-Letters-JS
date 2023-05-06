@@ -8,7 +8,8 @@
  * Web/contact: www.sns.pm
  * License: GNU AGPL (open source)
  * Script: animate_letters.js
- * Version: 0.1.0
+ * Version: 1.0.0
+ * GitHub: https://github.com/Raf-sns/Animate-Letters-JS
  *
  */
 
@@ -42,11 +43,12 @@
  *				 ['space_letters']
  *			 ],
  *			 // timers by phases -> array of objects
- *			 // set : { increment_delay : [integer in milliseconds] }
+ *			 // set : { delay : [integer in milliseconds],
+ *			 //  				increment_delay : [integer in milliseconds] }
  *			 timers : [
- *				 { increment_delay : 100 },
- *				 { increment_delay : 80 },
- *				 { increment_delay : 50 }
+ *				 { delay : 0,   increment_delay : 60 },
+ *				 { delay : 100, increment_delay : 40 },
+ *				 { delay : 80,  increment_delay : 30 }
  *			 ],
  *			 // remove spans who wrapped letters at the end of last phase
  *			 // set : true / false
@@ -75,7 +77,7 @@
 	/**
 	 * animate_letters( element, options )
 	 * @param  {string}		element		html element
-	 * @param  {array}		options 	Object -> array of classes
+	 * @param  {array}		options 	Object of options
 	 * @return {instance}
 	 */
 	const animate_letters = ( element, options ) => {
@@ -203,12 +205,27 @@
 					}
 
 
-					// base delay - fire first letter without delay
-					this.delay_time = 0;
+					// base delay - fire first letter with a delay
+					if( options.timers[this.Indx] === undefined
+					|| options.timers[this.Indx].delay === undefined ){
+
+							// set a delay to start by default if not defined
+							this.delay_time = 0;
+
+							// throw a message
+							console.info(`Animate letters : No value found for the timer delay of this phase, the default value 0 was used`);
+					}
+					else{
+
+							// set a delay to start
+							this.delay_time = options.timers[this.Indx].delay;
+					}
+
 
 					// set increment delay for ech phases - default : 100
 					// manage increment_delay not setted
-					if( options.timers[this.Indx] === undefined ){
+					if( options.timers[this.Indx] === undefined
+					|| options.timers[this.Indx].increment_delay === undefined ){
 
 							// set an increment_delay value by default
 							this.increment_delay = 100;
@@ -262,7 +279,8 @@
 											// increment phase index
 											this.Indx++;
 
-											// finish - chain | callback_function() | end
+											// finish : chain next phase || callback_function()
+											// || remove <span> tags || end
 											this.end();
 									}
 									// end last index
@@ -285,10 +303,12 @@
 
 			/**
 			 * this.end();
-			 * @return {void}	listen for transitionend
-			 * and animationend events -> clean at the end of events
-			 * -> if it's asked ( options.clean_after = true )
-			 * else : keep text of the element wrapped by <span> tags
+			 * @return {void}	Re-run the fonction this.run() for start a new loop
+			 * OR listen for transitionend or animationend events
+			 * FOR 1/ run a callback function ( options.end_callBack() )
+			 *     2/ clean <span> tags  at the end of events
+			 * 				-> if it's asked ( options.clean_after = true )
+			 * 				-> else keep text of the element wrapped by <span> tags
 			 * Note : this.Letters = all <span> tags of the element
 			 */
 			this.end = () => {
@@ -310,7 +330,7 @@
 					// put an event on transition end
 					this.Letters[last_index].ontransitionend = () => {
 
-							// console.log('End of last transition');
+							// console.log('End of last transition of last letter');
 
 							// callback
 							if( typeof options.end_callBack === 'function' ){
@@ -319,7 +339,9 @@
 									options.end_callBack();
 							}
 
-							// remove spans after last transition end
+							// if ( options.clean_after = true ) -> remove <span> tags
+							// after last transition end
+							// else -> do nothing and keep letters wrapped by <span> tags
 							this.remove_spans();
 
 					}
@@ -329,7 +351,7 @@
 					// event listener animationend
 					this.Letters[last_index].onanimationend = () => {
 
-							// console.log('End of last animation');
+							// console.log('End of last animation of last letter');
 
 							// callback
 							if( typeof options.end_callBack === 'function' ){
@@ -338,7 +360,9 @@
 									options.end_callBack();
 							}
 
-							// remove spans after last animation end
+							// if ( options.clean_after = true ) -> remove <span> tags
+							// after last animation end
+							// else -> do nothing and keep letters wrapped by <span> tags
 							this.remove_spans();
 
 					}
@@ -358,14 +382,14 @@
 			this.remove_spans = () => {
 
 
-					// no clean spans if clean after = false
+					// don't remove <span> tags
 					if( options.clean_after == false ){
 							return;
 					}
 
+					// un-wrap <span> tags
 					this.Letters.forEach((item, i) => {
 
-							// un-wrap spans
 							item.replaceWith( ...item.innerText );
 					});
 
@@ -376,8 +400,8 @@
 
 
 
-			// prepare letters - wrap all letters by a span tag
-			// + add a first class if it's needed
+			// prepare letters - wrap all letters by a <span> tag
+			// + add a first class to each if it's needed
 			this.prepare();
 
 
@@ -389,6 +413,6 @@
 	/**
 	 * END animate_letters( element, options )
 	 * @param  {string}		element		html element
-	 * @param  {array}		options 	Object -> array of classes
+	 * @param  {array}		options 	Object of options
 	 * @return {instance}
 	 */
