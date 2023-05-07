@@ -170,17 +170,17 @@ var Animate_letters_options = {
 6. initialize animate_letters( element, options ) :
 
 ```javascript
-<script>
+
  var letters = animate_letters( '.text_to_animate' , Animate_letters_options );
-</script>
+
 ```
 
 7. run animate_letters() when you want :
 
 ```javascript
-<script>
+
  letters.run();
-</script>
+
 ```
 
 
@@ -198,7 +198,7 @@ Object **options = { };**
 | `prepare` | This or these classes will be added as soon as the library is initialized by the `animate_letters(element, options);` function. You can add one or more classes as in HTML, in a character string **Set:** `'class_1 class_2'` or `''` to do nothing. *This can be useful to hide your text before animating it or to prepare classes that will be removed during an iteration.* |
 | `add` | An array that contains arrays of classes to add. Each class array leads to an iteration. If you have two arrays of classes, the api will add the classes from the first array to each letter, then at the end it will start again at the first letter and add the classes from the second array. As many times as there are class tables. **Set:** `[]` or `['class_a']` or `['class_a','class_b']`. **note:** *You must have the same number of arrays for the properties of `add` and `remove`.* **You can put empty arrays `[],` as value** you might get be doing it. |
 | `remove` | An array that contains arrays of classes to remove. Each class array leads to an iteration. If you have two arrays of classes, the api will remove the classes from the first array at each letter, then at the end it will start again at the first letter and remove the classes from the second array. As many times as there are class tables. **Set:** `[]` or `['class_a']` or `['class_a','class_b']`. **note:** *You must have the same number of arrays for the properties of `add` and `remove`.* **You can put empty arrays `[],` as value** you might get be doing it. |
-| `timers` | An array that contains a list of objects - For each iteration, set the delay time to execute class additions or subtractions on each letter. You must provide here a series of objects with the property `increment_delay` which will have as value an integer representing the value of the delay in milliseconds Eg.: `100`. **note:** *If you don't put as many objects as there are iterations, the value `100` will be taken into account by default.* **Set:** `{ increment_delay: 80 },{ increment_delay: 60 },...` |
+| `timers` | An array containing a list of objects - For each iteration, set the timeout for class additions or subtractions on each letter. Here you need to provide a series of objects with the `delay` properties which indicates a delay time before the start of the loop and which will be incremented by `increment_delay`. The values to be indicated here are integers representing the value of the delay in milliseconds Ex. : '100'. **note:** *If you don't put as many objects as there are iterations, the `0` value will be taken into account by default for the delay before execution and the value `100` will be taken into account default count for delay increment.* **Set:** `{ delay: 0, increment_delay: 80 },{ delay: 100, increment_delay: 60 },...` |
 | `clean_after` | **Set:** `true` / `false` - Pass this value to `true` so that at the end of the last iteration on the last letter, the api cleans up the code and removes the `<span>` that wrapped the letters. Pass this value to `false` to keep the letters of the text wrapped by `<span>` tags, as needed. |
 | `end_callBack` | function to launch at the end of the last iteration - **Set:** `your_function()` or `null` |
 
