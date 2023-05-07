@@ -131,8 +131,8 @@ var Animate_letters_options = {
     ['space_letters','color_letters']
   ],
   // timers by phases -> array of objects
-  // set : { 	delay : [integer in milliseconds],
-  //  				increment_delay : [integer in milliseconds]  }
+  // set : { delay : [integer in milliseconds],
+  //  			 increment_delay : [integer in milliseconds]  }
   timers : [
     { delay : 0, increment_delay : 60 },  // phase 1
     { delay : 100, increment_delay : 40 },  // phase 2
