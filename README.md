@@ -204,7 +204,7 @@ Object **options = { };**
 
 ### License :
 
-Under GNU AGPL v-3 license - Fress - Open Source - share your changes with the community - credit the author.
+Under GNU AGPL license - Free - Open Source - Share your changes with the community - Credit the author.
 
 ### Disclaimer :
 
