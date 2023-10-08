@@ -8,8 +8,8 @@
  * Web/contact: www.sns.pm
  * License: GNU AGPL (open source)
  * Script: animate_letters.js
- * Version: 1.0.0
- * GitHub : https://github.com/Raf-sns/Animate-Letters-JS
+ * Version: 0.1.1
+ *
  */
 
 
@@ -42,12 +42,11 @@
  *				 ['space_letters']
  *			 ],
  *			 // timers by phases -> array of objects
- *			 // set : { delay : [integer in milliseconds],
- *			 //  				increment_delay : [integer in milliseconds] }
+ *			 // set : { increment_delay : [integer in milliseconds] }
  *			 timers : [
- *				 { delay : 0,   increment_delay : 60 },
- *				 { delay : 100, increment_delay : 40 },
- *				 { delay : 80,  increment_delay : 30 }
+ *				 { increment_delay : 100 },
+ *				 { increment_delay : 80 },
+ *				 { increment_delay : 50 }
  *			 ],
  *			 // remove spans who wrapped letters at the end of last phase
  *			 // set : true / false
@@ -76,7 +75,7 @@
 	/**
 	 * animate_letters( element, options )
 	 * @param  {string}		element		html element
-	 * @param  {array}		options 	Object of options
+	 * @param  {array}		options 	Object -> array of classes
 	 * @return {instance}
 	 */
 	const animate_letters = ( element, options ) => {
@@ -130,8 +129,8 @@
 						document.querySelector(element).innerHTML;
 					const regx_1 = /(<br>)/gm;
 					const regx_2 = /(&amp;)/gm;
-					text = text.replace(regx_1, 'ø');
-					text = text.replace(regx_2, '& ');
+					text = text.replaceAll(regx_1, 'ø');
+					text = text.replaceAll(regx_2, '& ');
 					// console.log( text );
 
 					// make an array from text
@@ -204,27 +203,12 @@
 					}
 
 
-					// base delay - fire first letter with a delay
-					if( options.timers[this.Indx] === undefined
-					|| options.timers[this.Indx].delay === undefined ){
-
-							// set a delay to start by default if not defined
-							this.delay_time = 0;
-
-							// throw a message
-							console.info(`Animate letters : No value found for the timer delay of this phase, the default value 0 was used`);
-					}
-					else{
-
-							// set a delay to start
-							this.delay_time = options.timers[this.Indx].delay;
-					}
-
+					// base delay - fire first letter without delay
+					this.delay_time = 0;
 
 					// set increment delay for ech phases - default : 100
 					// manage increment_delay not setted
-					if( options.timers[this.Indx] === undefined
-					|| options.timers[this.Indx].increment_delay === undefined ){
+					if( options.timers[this.Indx] === undefined ){
 
 							// set an increment_delay value by default
 							this.increment_delay = 100;
@@ -278,8 +262,7 @@
 											// increment phase index
 											this.Indx++;
 
-											// finish : chain next phase || callback_function()
-											// || remove <span> tags || end
+											// finish - chain | callback_function() | end
 											this.end();
 									}
 									// end last index
@@ -302,12 +285,10 @@
 
 			/**
 			 * this.end();
-			 * @return {void}	Re-run the fonction this.run() for start a new loop
-			 * OR listen for transitionend or animationend events
-			 * FOR 1/ run a callback function ( options.end_callBack() )
-			 *     2/ clean <span> tags  at the end of events
-			 * 				-> if it's asked ( options.clean_after = true )
-			 * 				-> else keep text of the element wrapped by <span> tags
+			 * @return {void}	listen for transitionend
+			 * and animationend events -> clean at the end of events
+			 * -> if it's asked ( options.clean_after = true )
+			 * else : keep text of the element wrapped by <span> tags
 			 * Note : this.Letters = all <span> tags of the element
 			 */
 			this.end = () => {
@@ -329,7 +310,7 @@
 					// put an event on transition end
 					this.Letters[last_index].ontransitionend = () => {
 
-							// console.log('End of last transition of last letter');
+							// console.log('End of last transition');
 
 							// callback
 							if( typeof options.end_callBack === 'function' ){
@@ -338,9 +319,7 @@
 									options.end_callBack();
 							}
 
-							// if ( options.clean_after = true ) -> remove <span> tags
-							// after last transition end
-							// else -> do nothing and keep letters wrapped by <span> tags
+							// remove spans after last transition end
 							this.remove_spans();
 
 					}
@@ -350,7 +329,7 @@
 					// event listener animationend
 					this.Letters[last_index].onanimationend = () => {
 
-							// console.log('End of last animation of last letter');
+							// console.log('End of last animation');
 
 							// callback
 							if( typeof options.end_callBack === 'function' ){
@@ -359,9 +338,7 @@
 									options.end_callBack();
 							}
 
-							// if ( options.clean_after = true ) -> remove <span> tags
-							// after last animation end
-							// else -> do nothing and keep letters wrapped by <span> tags
+							// remove spans after last animation end
 							this.remove_spans();
 
 					}
@@ -381,14 +358,14 @@
 			this.remove_spans = () => {
 
 
-					// don't remove <span> tags
+					// no clean spans if clean after = false
 					if( options.clean_after == false ){
 							return;
 					}
 
-					// un-wrap <span> tags
 					this.Letters.forEach((item, i) => {
 
+							// un-wrap spans
 							item.replaceWith( ...item.innerText );
 					});
 
@@ -399,8 +376,8 @@
 
 
 
-			// prepare letters - wrap all letters by a <span> tag
-			// + add a first class to each if it's needed
+			// prepare letters - wrap all letters by a span tag
+			// + add a first class if it's needed
 			this.prepare();
 
 
@@ -412,6 +389,6 @@
 	/**
 	 * END animate_letters( element, options )
 	 * @param  {string}		element		html element
-	 * @param  {array}		options 	Object of options
+	 * @param  {array}		options 	Object -> array of classes
 	 * @return {instance}
 	 */
