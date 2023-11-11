@@ -8,79 +8,38 @@
  * Web/contact: www.sns.pm
  * License: GNU AGPL (open source)
  * Script: animate_letters.js
- * Version: 0.1.0
+ * Version: 2.0.0
  *
- */
-
-
-/**
- *
- * 1 - Define options :
- *
- * var LTR_options = {
- *
- *			 // add class(es) list 'class_1 class_2' or ''
- *			 prepare : 'letters_in_top',
- *			 // classes to add by phases
- *			 // set : []  |  ['class_a']  |  ['class_a','class_b']
- *			 add : [
- *				 // phase 1
- *				 [],
- *				 // phase 2
- *				 ['rotate_letters', 'space_letters'],
- *				 // phase 3 ...
- *				 []
- *			 ],
- *			 // classes to remove by phases arrays of classes
- *			 // set : []  |  ['class_a']  |  ['class_a','class_b']
- *			 remove : [
- *				 // phase 1
- *				 ['letters_in_top'],
- *				 // phase 2
- *				 [],
- *				 // phase 3 ...
- *				 ['space_letters']
- *			 ],
- *			 // timers by phases -> array of objects
- *			 // set : { increment_delay : [integer in milliseconds] }
- *			 timers : [
- *				 { increment_delay : 100 },
- *				 { increment_delay : 80 },
- *				 { increment_delay : 50 }
- *			 ],
- *			 // remove spans who wrapped letters at the end of last phase
- *			 // set : true / false
- *			 clean_after : true,
- *			 // function to launch at the end of the last phase
- *			 // set : your_function() or null
- *			 end_callBack : function(){
- *
- *					 document.querySelector('.title_to_animate')
- *					 .classList.add('callback_anim');
- *			 }
- *
- *	 };
- *
- *
- * 2 - Use :
- *
- *  // initialize animate_letters
- *  var letters = animate_letters( 'h1#my_title', LTR_options );
- *  // run animate_letters
- *  letters.run();
+ * animate_letters( element, Options ) -> return instance
+ * this.error : handling some errors
+ * this.element_memorized = '';
+ * this.memorize_element(); -> memorize element.outerHTML
+ * this.hide_element_before(); -> if need to hide text before
+ * this.text_memorized = ''; -> for keep memorized innerHTML of element
+ * this.prepare(); -> wrap with <span> + add classes to <span> elements before animation
+ * this.Letters = []; -> array of letters wrapped with <span>
+ * this.Indx = 0; -> index for sibling phases
+ * this.stop = false; -> stop in progress
+ * this.run(); -> add or remove classes from spans by phases
+ * this.end(); -> run a function at the end of animation's phases
+ * this.remove_spans(); -> remove <span> who wrap text at the end of events
+ * this.re_init(); -> reset element as at start
+ * Launch : this.prepare();
+ * return this;
  *
  */
 
 
 	/**
-	 * animate_letters( element, options )
+	 * animate_letters( element, Options )
 	 * @param  {string}		element		html element
-	 * @param  {array}		options 	Object -> array of classes
+	 * @param  {array}		Options 	Object of options
 	 * @return {instance}
 	 */
-	const animate_letters = ( element, options ) => {
+	const animate_letters = ( element, Options ) => {
 
 
+			// manage errors
 
 			// errors - stop on error
 			this.error = false;
@@ -94,43 +53,99 @@
 					this.error = true;
 			}
 
-			// error - no options found
-			if( !options
-			|| options.add === undefined
-			|| options.remove === undefined ){
+			// error - no Options found
+			if( !Options
+			|| Options.add === undefined
+			|| Options.remove === undefined ){
 
-					console.error( `Animate letters : Please, provide an object of options`);
+					console.error( `Animate letters : Please, provide an object of Options`);
 
 					// set error to true
 					this.error = true;
 			}
 
 			// error - no same phases numbers
-			if( options.add.length != options.remove.length ){
+			if( Options.add.length != Options.remove.length ){
 
 					console.error( `Animate letters : Please, provide the same number of arrays for adding and removing phases`);
 
 					// set error to true
 					this.error = true;
 			}
-			// end errors
+
+			// end manage errors
 
 
 
 			/**
+			 * for keep memorized element as at start
+			 */
+			this.element_memorized = '';
+
+
+			/**
+			 * this.memorize_element();
+			 * memorize element as at start
+			 * @return {void}
+			 */
+			this.memorize_element = () => {
+
+					this.element_memorized = document.querySelector(element).outerHTML;
+			}
+			/**
+			 * end this.memorize_element();
+			 */
+
+
+
+			/**
+			 * this.hide_element_before();
+			 * @return {void}	display text visibility hidden
+			 * before on prepare animation
+			 */
+			this.hide_element_before = () => {
+
+					document.querySelector(element).style.visibility = 'hidden';
+			}
+			/**
+			 * end this.hide_element_before();
+			 */
+
+
+
+			/**
+			 * for keep memorized innerHTML of element
+			 */
+			this.text_memorized = '';
+
+
+			/**
 			 * this.prepare();
-			 * @return {html}	wrap text element with spans
+			 * @return {html}	wrap text of element with spans
 			 */
 			this.prepare = () => {
 
 
+					// memorize element before
+					this.memorize_element();
+
+					// hide text before ?
+					if( Options.hide_element_before == true ){
+
+							this.hide_element_before();
+					}
+
 					// get the text
 					var text =
 						document.querySelector(element).innerHTML;
-					const regx_1 = /(<br>)/gm;
+
+					// memorize HTML of element
+					this.text_memorized = text;
+
+					const regx_1 = /(<br>)|(<br\/>)/gm;
 					const regx_2 = /(&amp;)/gm;
 					text = text.replaceAll(regx_1, 'ø');
-					text = text.replaceAll(regx_2, '& ');
+					text = text.replaceAll(regx_2, '&');
 					// console.log( text );
 
 					// make an array from text
@@ -145,7 +160,7 @@
 							if( item == 'ø' ){
 
 									// re-insert <br> tags -> no wrap
-									new_html += '<br>';
+									new_html += '<br/>';
 							}
 							else if( item == ' ' ){
 
@@ -154,11 +169,11 @@
 							}
 							else{
 
-								// if need to add classes
-								if( options.prepare.length != 0 ){
+								// if need to add classes previously
+								if( Options.prepare.length != 0 ){
 
 										// wrap with spans and classes
-										new_html+= `<span class="`+options.prepare+`">`+item+`</span>`;
+										new_html+= `<span class="`+Options.prepare+`">`+item+`</span>`;
 								}
 								else{
 
@@ -178,8 +193,7 @@
 
 			}
 			/**
-			 * end prepare()
-			 * @return {html}	wrap text element with spans
+			 * end this.prepare();
 			 */
 
 
@@ -188,6 +202,9 @@
 
 			// index for sibling phases
 			this.Indx = 0;
+
+			// stop in progress
+			this.stop = false;
 
 
 			/**
@@ -202,13 +219,27 @@
 						return;
 					}
 
+					// show element if is hidden
+					if( Options.hide_element_before == true ){
 
-					// base delay - fire first letter without delay
-					this.delay_time = 0;
+							document.querySelector(element).style.visibility = 'visible';
+					}
 
-					// set increment delay for ech phases - default : 100
+					// base delay
+          if( Options.timers[this.Indx] === undefined
+              || Options.timers[this.Indx].delay === undefined ){
+
+                this.delay_time = 0;
+          }
+          else{
+                this.delay_time = 0;
+                this.delay_time += Options.timers[this.Indx].delay;
+          }
+
+					// set increment delay for each phases - default : 100
 					// manage increment_delay not setted
-					if( options.timers[this.Indx] === undefined ){
+					if( Options.timers[this.Indx] === undefined
+              || Options.timers[this.Indx].increment_delay === undefined ){
 
 							// set an increment_delay value by default
 							this.increment_delay = 100;
@@ -219,7 +250,7 @@
 					else{
 
 							// set increment_delay
-							this.increment_delay = options.timers[this.Indx].increment_delay;
+							this.increment_delay = Options.timers[this.Indx].increment_delay;
 					}
 
 
@@ -228,32 +259,71 @@
 						document.querySelectorAll( ''+element+' span' );
 
 
-					// array of setTimeout() -> for destroy them later
-					var Lambda = [];
+					// array of setTimeout() -> for clear them later
+					var TimeOutIds = [];
 
 
 					// apply style to each letters with a delay
-					this.Letters.forEach((item, i) => {
+					// use (for of) for enable break statement
+					for( const [i, item] of this.Letters.entries() ){
 
-							// timeout
-							Lambda[i] = setTimeout(function(){
 
+							// stop in progress
+							if( this.stop == true ){
 
 									// clear timeout
-									clearTimeout( Lambda[i] );
+									window.clearTimeout( TimeOutIds[i-1] );
 
+                  // reset index
+									this.Indx = 0;
 
-									// add or remove classes
-									if( options.add[this.Indx].length != 0 ){
+                  // empty letters array
+                  this.Letters = [];
+
+                  // stop here
+									break;
+							}
+
+							// timeout
+							TimeOutIds[i] = window.setTimeout(function(){
+
+									// stop here if hard reset
+									if( typeof Options.add[this.Indx] === 'undefined'
+									|| typeof Options.remove[this.Indx] === 'undefined' ){
+
+											return;
+									}
+
+                  // stop in progress - need to stop here too
+    							if( this.stop == true ){
+
+    									// clear timeout
+    									window.clearTimeout( TimeOutIds[i] );
+
+                      // reset index
+    									this.Indx = 0;
+
+                      // empty letters array
+                      this.Letters = [];
+
+    									// stop here
+    									return;
+    							}
+
+									// add classes
+									if( typeof Options.add[this.Indx] !== 'undefined'
+									&& Options.add[this.Indx].length != 0 ){
 
 											// add classes
-											item.classList.add(...options.add[this.Indx]);
-
+											item.classList.add(...Options.add[this.Indx]);
 									}
-									if( options.remove[this.Indx].length != 0 ){
+
+									// remove classes
+									if( typeof Options.remove[this.Indx] !== 'undefined'
+									&& Options.remove[this.Indx].length != 0 ){
 
 											// remove classes
-											item.classList.remove(...options.remove[this.Indx]);
+											item.classList.remove(...Options.remove[this.Indx]);
 									}
 
 									// if last index
@@ -267,13 +337,17 @@
 									}
 									// end last index
 
+									// clear timeout
+									window.clearTimeout( TimeOutIds[i] );
+
 							}, this.delay_time );
 							// end timeout
+
 
 							// add delay to timer
 							this.delay_time += this.increment_delay;
 
-					});
+					};
 					// end loop Letters
 
 			}
@@ -287,25 +361,66 @@
 			 * this.end();
 			 * @return {void}	listen for transitionend
 			 * and animationend events -> clean at the end of events
-			 * -> if it's asked ( options.clean_after = true )
+			 * -> if it's asked ( Options.clean_after = true )
 			 * else : keep text of the element wrapped by <span> tags
 			 * Note : this.Letters = all <span> tags of the element
 			 */
 			this.end = () => {
 
 
-					// chain
-					if( this.Indx <= options.add.length-1 ){
-
-							// re-run function
-							this.run();
-
-							return;
-					}
-
 					// watch for the end of the animation
 					// or transition of the last letter
 					var last_index = this.Letters.length-1;
+
+          // stop in progress - need to stop here too
+          if( this.stop == true ){
+
+              // reset index
+              this.Indx = 0;
+
+              // empty letters array
+              this.Letters = [];
+
+              // cancel transition
+              this.Letters[last_index].ontransitioncancel = () => { };
+
+              // cancel animation
+              this.Letters[last_index].onanimationcancel = () => { };
+
+              // stop here
+              return;
+          }
+
+          // base delay
+          if( Options.timers[this.Indx] === undefined
+              || Options.timers[this.Indx].delay === undefined ){
+
+                this.phase_delay = 0;
+          }
+          else{
+                this.phase_delay = 0;
+                this.phase_delay += Options.timers[this.Indx].delay;
+          }
+
+          var TimeOutPhase = [];
+
+					// chain - MANAGE PHASES DELAY BETWEEN Options.timers
+					if( this.Indx <= Options.add.length-1 ){
+
+              TimeOutPhase[this.Indx] = window.setTimeout(function(){
+
+                  // re-run function
+    							this.run();
+
+                  // clear timeout
+                  window.clearTimeout( TimeOutPhase[this.Indx] );
+
+              }, this.phase_delay );
+
+							// and stop here
+							return;
+					}
+
 
 					// put an event on transition end
 					this.Letters[last_index].ontransitionend = () => {
@@ -313,10 +428,10 @@
 							// console.log('End of last transition');
 
 							// callback
-							if( typeof options.end_callBack === 'function' ){
+							if( typeof Options.end_callBack === 'function' ){
 
 									// launch callback function
-									options.end_callBack();
+									Options.end_callBack();
 							}
 
 							// remove spans after last transition end
@@ -332,10 +447,10 @@
 							// console.log('End of last animation');
 
 							// callback
-							if( typeof options.end_callBack === 'function' ){
+							if( typeof Options.end_callBack === 'function' ){
 
 									// launch callback function
-									options.end_callBack();
+									Options.end_callBack();
 							}
 
 							// remove spans after last animation end
@@ -353,22 +468,17 @@
 
 			/**
 			 * this.remove_spans();
-			 * un-wrap letters if options.clean_after = true
+			 * un-wrap letters if Options.clean_after = true
 			 */
 			this.remove_spans = () => {
 
-
 					// no clean spans if clean after = false
-					if( options.clean_after == false ){
+					if( Options.clean_after == false ){
 							return;
 					}
 
-					this.Letters.forEach((item, i) => {
-
-							// un-wrap spans
-							item.replaceWith( ...item.innerText );
-					});
-
+					// reset original HTML of element
+					document.querySelector(element).innerHTML = this.text_memorized;
 			}
 			/**
 			 * this.remove_spans();
@@ -376,19 +486,52 @@
 
 
 
+			/**
+			 * this.re_init();
+			 * @return {html} reset DOM element as at start
+			 */
+			this.re_init = () => {
+
+					// hard reset for break loop
+					this.stop = true;
+
+					// re-init index
+					this.Indx = 0;
+
+          // empty letters array
+          this.Letters = [];
+
+					// replace element into the DOM as at start
+					document.querySelector(element).outerHTML = this.element_memorized;
+
+					// hide text before ?
+					if( Options.hide_element_before == true ){
+
+							this.hide_element_before();
+					}
+
+					// prepare -> wrap text of element with <span>
+					this.prepare();
+
+					// enable loop
+					this.stop = false;
+			}
+			/**
+			 * end this.re_init();
+			 */
+
+
 			// prepare letters - wrap all letters by a span tag
 			// + add a first class if it's needed
 			this.prepare();
 
-
 			// return instance
 			return this;
 
-
 	}
 	/**
-	 * END animate_letters( element, options )
+	 * END animate_letters( element, Options )
 	 * @param  {string}		element		html element
-	 * @param  {array}		options 	Object -> array of classes
+	 * @param  {array}		Options 	Object of options
 	 * @return {instance}
 	 */

@@ -2,6 +2,8 @@
 	// set animate_letters() options
 	var Animate_letters_options = {
 
+			// hide element before run animation -> true, no hide -> false
+			hide_element_before : false,
 			// add class(es) list 'class_1 class_2' or ''
 			prepare : 'letters_in_top',
 			// classes to add by phases
@@ -32,7 +34,7 @@
 			// set : { 	delay : [integer in milliseconds],
 			//  				increment_delay : [integer in milliseconds]  }
 			timers : [
-				{ delay : 0, increment_delay : 60 },  // phase 1
+				{ delay : 100, increment_delay : 60 },  // phase 1
 				{ delay : 100, increment_delay : 40 },  // phase 2
 				{ delay : 80, increment_delay : 30 },  // phase 3
 				{ delay : 0, increment_delay : 20 }   // phase 4

@@ -104,6 +104,8 @@ ex. **exemple/CSS/demo.css**
 // set animate_letters() options
 var Animate_letters_options = {
 
+  // hide element before run animation -> true, no hide -> false
+  hide_element_before : false,
   // add class(es) list 'class_1 class_2' or ''
   prepare : 'letters_in_top',
   // classes to add by phases
@@ -183,6 +185,13 @@ var Animate_letters_options = {
 
 ```
 
+8. You can reset the element to the original state to play it over and over again, or interrupt it midway by calling the re_init() function, as in the following example:
+
+```javascript
+
+ letters.re_init();
+
+```
 
 ### App Documentation :
 
@@ -195,6 +204,7 @@ Function **animate_letters( element, options );**
 Object **options = { };**
 | Property | Value |
 | :--- | :--- |
+| `hide_element_before` | This setting is used to hide the element before playing the letters animation. Set to `true` to hide the element during instantiation or to `false` to not hide the element during instantiation.
 | `prepare` | This or these classes will be added as soon as the library is initialized by the `animate_letters(element, options);` function. You can add one or more classes as in HTML, in a character string **Set:** `'class_1 class_2'` or `''` to do nothing. *This can be useful to hide your text before animating it or to prepare classes that will be removed during an iteration.* |
 | `add` | An array that contains arrays of classes to add. Each class array leads to an iteration. If you have two arrays of classes, the api will add the classes from the first array to each letter, then at the end it will start again at the first letter and add the classes from the second array. As many times as there are class tables. **Set:** `[]` or `['class_a']` or `['class_a','class_b']`. **note:** *You must have the same number of arrays for the properties of `add` and `remove`.* **You can put empty arrays `[],` as value** you might get be doing it. |
 | `remove` | An array that contains arrays of classes to remove. Each class array leads to an iteration. If you have two arrays of classes, the api will remove the classes from the first array at each letter, then at the end it will start again at the first letter and remove the classes from the second array. As many times as there are class tables. **Set:** `[]` or `['class_a']` or `['class_a','class_b']`. **note:** *You must have the same number of arrays for the properties of `add` and `remove`.* **You can put empty arrays `[],` as value** you might get be doing it. |
