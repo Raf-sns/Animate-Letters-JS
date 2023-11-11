@@ -218,10 +218,12 @@ Under GNU AGPL license - Free - Open Source - Share your changes with the commun
 
 ### Disclaimer :
 
-**Be careful ! This is just a beta version for now.**
+**This code comes without any warranty.**
+
+**Please report any bugs you encounter.**
 
 **Any contribution is welcome !**
 
 ###
 
-Developed by @Raf-sns - [Raphaël Castello / SNS - Web et informatique](https://sns.pm)
+❤ Developed by @Raf-sns - [Raphaël Castello / SNS - Web et informatique](https://sns.pm)
